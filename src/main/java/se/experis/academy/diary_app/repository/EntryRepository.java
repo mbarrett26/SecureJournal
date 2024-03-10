@@ -19,6 +19,7 @@ public interface EntryRepository extends CrudRepository<Entry, Long> {
      */
     List<Entry> findByActiveTrueOrderByDateDesc();
 
+    List<Entry> findEntriesByUserIDOrderById(long userID);
     /**
      * finds entry by id
      * @param id long

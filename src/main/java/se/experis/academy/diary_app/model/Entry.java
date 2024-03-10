@@ -28,6 +28,9 @@ public class Entry {
     @Column(name = "active", nullable = false)
     private boolean active = true ;
 
+    @Column(name="userID",nullable = false)
+    private long userID;
+
     /**
      * Constructor
      * @param text The text for the entry

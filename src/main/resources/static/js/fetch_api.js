@@ -3,7 +3,7 @@ let addForm, addDate, addText, addImage, addUrl;
 let editForm, editDate, editText, editImage, editId, editUrl;
 let entriesHtml;
 
-const BASE_URL = location.protocol + '//' + location.host + "/api/";
+const BASE_URL = location.protocol + '/index/' + location.host + "/api/";
 
 function initializeGlobalVariables() {
     addForm = document.getElementById('addForm');

@@ -4,11 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import se.experis.academy.diary_app.model.BlogUser;
 import se.experis.academy.diary_app.model.Entry;
 import se.experis.academy.diary_app.model.Response;
 import se.experis.academy.diary_app.repository.EntryRepository;
+import se.experis.academy.diary_app.service.UserService;
 
+import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Represents the Entry API
@@ -17,18 +21,32 @@ import java.util.List;
 @RequestMapping("/api")
 public class EntryController {
 
-    @Autowired
-    EntryRepository entryRepository;
 
+    private final EntryRepository entryRepository;
+    private final UserService userService;
+
+    @Autowired
+    public EntryController(EntryRepository entryRepository, UserService userService) {
+        this.entryRepository = entryRepository;
+        this.userService = userService;
+    }
     /**
      * Gets all the active entries and sorts them by date
      * @return ResponseEntity with all entries and message, or null and message
      */
     @GetMapping("/entries")
-    public ResponseEntity<Response> getEntries() {
+    public ResponseEntity<Response> getEntries(Principal principal) {
         Response response;
         HttpStatus status;
-        List<Entry> entries = entryRepository.findByActiveTrueOrderByDateDesc();
+        String authUsername = null;
+        //List<Entry> entries = entryRepository.findByActiveTrueOrderByDateDesc();
+        if (principal != null) {
+             System.err.println("here");
+             authUsername = principal.getName(); // Retrieves the logged-in username
+        }
+        Optional<BlogUser> optionalBlogUser = userService.findByUsername(authUsername);
+
+        List<Entry> entries = entryRepository.findEntriesByUserIDOrderById(optionalBlogUser.get().getId());
         if (entries != null && !entries.isEmpty()){
             response = new Response(entries, "SUCCESS");
             status = HttpStatus.OK;

@@ -18,7 +18,7 @@ public interface EntryRepository extends CrudRepository<Entry, Long> {
      * @return list of entries
      */
     List<Entry> findByActiveTrueOrderByDateDesc();
-
+    
     List<Entry> findEntriesByUserIDOrderById(long userID);
     /**
      * finds entry by id
@@ -37,5 +37,6 @@ public interface EntryRepository extends CrudRepository<Entry, Long> {
     @Override
     <S extends Entry> S save(S s);
 
+    List<Entry> findEntriesByUserIDOrderByDateDesc(Long id);
 }
 

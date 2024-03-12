@@ -46,7 +46,7 @@ public class EntryController {
         }
         Optional<BlogUser> optionalBlogUser = userService.findByUsername(authUsername);
 
-        List<Entry> entries = entryRepository.findEntriesByUserIDOrderById(optionalBlogUser.get().getId());
+        List<Entry> entries = entryRepository.findEntriesByUserIDOrderByDateDesc(optionalBlogUser.get().getId());
         if (entries != null && !entries.isEmpty()){
             response = new Response(entries, "SUCCESS");
             status = HttpStatus.OK;

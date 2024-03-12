@@ -42,7 +42,7 @@ public class WebController {
             Optional<BlogUser> optionalBlogUser = userService.findByUsername(authUsername);
             if(optionalBlogUser.isPresent()) {
                 Long userId = optionalBlogUser.get().getId();
-                List<Entry> entries = entryRepository.findEntriesByUserIDOrderById(userId);
+                List<Entry> entries = entryRepository.findEntriesByUserIDOrderByDateDesc(userId);
                 model.addAttribute("entries", entries);
             }
         }

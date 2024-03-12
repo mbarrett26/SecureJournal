@@ -49,6 +49,10 @@ public class Entry {
 
     public String getText() { return text; }
 
+    public void setUserID(long userID) {
+        this.userID = userID;
+    }
+
     /**
      * Parses the date into a formated string
      * @return date as yyyy-mm-dd

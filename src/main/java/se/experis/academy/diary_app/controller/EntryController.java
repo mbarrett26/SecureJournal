@@ -85,11 +85,21 @@ public class EntryController {
      * @return ResponseEntity with entry and message, otherwise null and message
      */
     @PostMapping("/entry/create")
-    public ResponseEntity<Response> addEntry(@RequestBody Entry entry) {
-        Entry createdEntry = entryRepository.save(entry);
-        Response response = new Response(createdEntry, "CREATED");
-        HttpStatus status = HttpStatus.CREATED;
-        return new ResponseEntity<>(response, status);
+    public ResponseEntity<Response> addEntry(@RequestBody Entry entry, Principal principal) {
+        if (principal != null) {
+            String authUsername = principal.getName(); // Retrieves the logged-in username
+            Optional<BlogUser> optionalBlogUser = userService.findByUsername(authUsername);
+            if (optionalBlogUser.isPresent()) {
+                entry.setUserID(optionalBlogUser.get().getId()); // Set the user ID to the entry
+                Entry createdEntry = entryRepository.save(entry);
+                Response response = new Response(createdEntry, "CREATED");
+                return new ResponseEntity<>(response, HttpStatus.CREATED);
+            }
+        }
+
+        // If user not found or principal is null, return error response
+        Response response = new Response(null, "USER NOT FOUND OR UNAUTHORIZED");
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
     /**

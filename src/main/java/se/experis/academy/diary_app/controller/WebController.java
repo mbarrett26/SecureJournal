@@ -39,10 +39,13 @@ public class WebController {
         if (principal != null) {
             System.err.println("here");
             authUsername = principal.getName(); // Retrieves the logged-in username
+            Optional<BlogUser> optionalBlogUser = userService.findByUsername(authUsername);
+            if(optionalBlogUser.isPresent()) {
+                Long userId = optionalBlogUser.get().getId();
+                List<Entry> entries = entryRepository.findEntriesByUserIDOrderById(userId);
+                model.addAttribute("entries", entries);
+            }
         }
-        Optional<BlogUser> optionalBlogUser = userService.findByUsername(authUsername);
-        List<Entry> entries = entryRepository.findEntriesByUserIDOrderById(optionalBlogUser.get().getId());
-        model.addAttribute("entries", entries);
         return "index";
     }
 

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import se.experis.academy.diary_app.GCM;
 import se.experis.academy.diary_app.model.BlogUser;
 import se.experis.academy.diary_app.model.Entry;
 import se.experis.academy.diary_app.model.Response;
@@ -35,7 +36,7 @@ public class EntryController {
      * @return ResponseEntity with all entries and message, or null and message
      */
     @GetMapping("/entries")
-    public ResponseEntity<Response> getEntries(Principal principal) {
+    public ResponseEntity<Response> getEntries(Principal principal) throws Exception {
         Response response;
         HttpStatus status;
         String authUsername = null;
@@ -47,6 +48,15 @@ public class EntryController {
         Optional<BlogUser> optionalBlogUser = userService.findByUsername(authUsername);
 
         List<Entry> entries = entryRepository.findEntriesByUserIDOrderByDateDesc(optionalBlogUser.get().getId());
+
+        for(Entry e : entries){
+            String msg = e.getText();
+            String masterKey = optionalBlogUser.get().getPass();
+            String decodedMsg = GCM.decrypt(msg, masterKey);
+
+            e.setText(decodedMsg);
+        }
+
         if (entries != null && !entries.isEmpty()){
             response = new Response(entries, "SUCCESS");
             status = HttpStatus.OK;
@@ -85,13 +95,17 @@ public class EntryController {
      * @return ResponseEntity with entry and message, otherwise null and message
      */
     @PostMapping("/entry/create")
-    public ResponseEntity<Response> addEntry(@RequestBody Entry entry, Principal principal) {
+    public ResponseEntity<Response> addEntry(@RequestBody Entry entry, Principal principal) throws Exception {
         if (principal != null) {
             String authUsername = principal.getName(); // Retrieves the logged-in username
             Optional<BlogUser> optionalBlogUser = userService.findByUsername(authUsername);
             if (optionalBlogUser.isPresent()) {
+                String msg = entry.getText();
+                String masterKey = optionalBlogUser.get().getPass();
+                String encodedMsg = GCM.encrypt(masterKey, msg);
+
                 entry.setUserID(optionalBlogUser.get().getId()); // Set the user ID to the entry
-                System.err.println(entry.getDate());
+                entry.setText(encodedMsg);// Save encoded text
                 Entry createdEntry = entryRepository.save(entry);
                 Response response = new Response(createdEntry, "CREATED");
                 return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -109,7 +123,7 @@ public class EntryController {
      * @return ResponseEntity with modified entry and message, or null and message
      */
     @PatchMapping("/entry/update")
-    public ResponseEntity<Response> updateEntry(@RequestBody Entry entry, Principal principal) {
+    public ResponseEntity<Response> updateEntry(@RequestBody Entry entry, Principal principal) throws Exception {
         Response response;
         HttpStatus httpStatus;
         String authUsername ="";
@@ -120,8 +134,12 @@ public class EntryController {
         Optional<BlogUser> optionalBlogUser = userService.findByUsername(authUsername);
 
         if (entryRepository.existsById(entry.getId())) {
+            String msg = entry.getText();
+            String masterKey = optionalBlogUser.get().getPass();
+            String decodedMsg = GCM.decrypt(msg, masterKey);
+
+            entry.setText(decodedMsg);
             entry.setUserID(optionalBlogUser.get().getId());
-            System.err.println(entry.getDate());
             Entry modifiedEntry = entryRepository.save(entry);
             response = new Response(modifiedEntry, "MODIFIED");
             httpStatus = HttpStatus.OK;

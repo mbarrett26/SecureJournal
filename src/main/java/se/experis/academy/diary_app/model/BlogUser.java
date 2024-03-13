@@ -68,6 +68,11 @@ public class BlogUser implements UserDetails { //model class for users
         return this.enabled;
     }
 
+    public String getPass(){
+        return password;
+    }
+
+
     @Override
     public String toString() { //to string method for model class
         return "BlogUser{" +

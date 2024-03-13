@@ -68,8 +68,8 @@ public class EntryController {
         HttpStatus status;
         if (entryRepository.existsById(id)) {
             Entry entry = entryRepository.findById(id);
-            entry.setInactive();
-            entryRepository.save(entry);
+
+            entryRepository.delete(entry);
             response = new Response(null, "DELETED");
             status = HttpStatus.OK;
         } else {
@@ -91,6 +91,7 @@ public class EntryController {
             Optional<BlogUser> optionalBlogUser = userService.findByUsername(authUsername);
             if (optionalBlogUser.isPresent()) {
                 entry.setUserID(optionalBlogUser.get().getId()); // Set the user ID to the entry
+                System.err.println(entry.getDate());
                 Entry createdEntry = entryRepository.save(entry);
                 Response response = new Response(createdEntry, "CREATED");
                 return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -108,10 +109,19 @@ public class EntryController {
      * @return ResponseEntity with modified entry and message, or null and message
      */
     @PatchMapping("/entry/update")
-    public ResponseEntity<Response> updateEntry(@RequestBody Entry entry) {
+    public ResponseEntity<Response> updateEntry(@RequestBody Entry entry, Principal principal) {
         Response response;
         HttpStatus httpStatus;
+        String authUsername ="";
+        if (principal != null) {
+            System.err.println("here");
+            authUsername = principal.getName(); // Retrieves the logged-in username
+        }
+        Optional<BlogUser> optionalBlogUser = userService.findByUsername(authUsername);
+
         if (entryRepository.existsById(entry.getId())) {
+            entry.setUserID(optionalBlogUser.get().getId());
+            System.err.println(entry.getDate());
             Entry modifiedEntry = entryRepository.save(entry);
             response = new Response(modifiedEntry, "MODIFIED");
             httpStatus = HttpStatus.OK;

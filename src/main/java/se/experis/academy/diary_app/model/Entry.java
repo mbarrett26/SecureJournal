@@ -16,7 +16,7 @@ public class Entry {
     private long id;
 
     @Column(name = "date", nullable = false)
-    private Date date;
+    private String date;
 
     @Column(name = "text", nullable = false, columnDefinition = "TEXT")
     private String text;
@@ -25,8 +25,6 @@ public class Entry {
     @Column(name = "img", nullable = false)
     private char[] img;
 
-    @Column(name = "active", nullable = false)
-    private boolean active = true ;
 
     @Column(name="userID",nullable = false)
     private long userID;
@@ -37,7 +35,7 @@ public class Entry {
      * @param date The date for the entry, strings are automatically parsed
      * @param img The image url
      */
-    public Entry(String text, Date date, char[] img) {
+    public Entry(String text, String date, char[] img) {
         this.text = text;
         this.date = date;
         this.img = img;
@@ -58,15 +56,11 @@ public class Entry {
      * @return date as yyyy-mm-dd
      */
     public String getDate() {
-        String pattern = "yyyy-MM-dd";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-        return simpleDateFormat.format(date);
+        return date;
     }
 
     public String getImg() { return new String(img); }
 
-    public void setInactive() { active = false;}
-    //test
     @Override
     public String toString() {
         return "Contact{" +
@@ -74,7 +68,6 @@ public class Entry {
                 ", text='" + text + '\'' +
                 ", date='" + date + '\'' +
                 ", img='" + img + '\'' +
-                ", active=" + active +
                 '}';
     }
 }

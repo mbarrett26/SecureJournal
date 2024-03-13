@@ -39,7 +39,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers().frameOptions().disable()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/createNewPost/**", "/editPost/**", "/comment/**", "/index/**").hasRole("USER")
+                .antMatchers("/index/**").hasRole("USER")
                 .antMatchers("/deletePost/**").hasRole("USER")
                 .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()

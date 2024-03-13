@@ -172,6 +172,7 @@ function editEntry(id, date, text, img) {
     if(checkEmptyField(id, date, text, img)) return;
     let dataObject = {id: id, date: date, text: text, img:img}
     console.log("Editing ", dataObject);
+    console.log("Date",dataObject.date);
     $.ajax({
         url: BASE_URL + "entry/update",
         type: 'PATCH',

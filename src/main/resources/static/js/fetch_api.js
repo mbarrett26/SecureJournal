@@ -24,18 +24,6 @@ function initializeGlobalVariables() {
 window.addEventListener("load", () => {
     initializeGlobalVariables();
 
-    // Fetch the user ID when the page loads
-    $.ajax({
-         url: BASE_URL + "user/id",
-         type: 'GET',
-         contentType: "application/json",
-         success: function(data) {
-            userId = data.id;
-            console.log("User ID:", userId);
-         },
-         fail: (err) => console.log("Couldn't get user ID ", err)
-    });
-
     /**
      * Takes care of the form submission
      */
@@ -48,15 +36,15 @@ window.addEventListener("load", () => {
             var reader = new FileReader();
             reader.onload = ((e) => {
                 let result = e.target.result;
-                addEntry(addDate.value, addText.value, result, userId);
+                addEntry(addDate.value, addText.value, result);
                 resetFields(addDate, addText, addImage, addUrl);
             });
             reader.readAsDataURL(img);
         } else if (url != ""){
-            addEntry(addDate.value, addText.value, url, userId);
+            addEntry(addDate.value, addText.value, url);
             resetFields(addDate, addText, addImage, addUrl);
         } else {
-            addEntry(addDate.value, addText.value, "", userId);
+            addEntry(addDate.value, addText.value, "");
             resetFields(addDate, addText, addImage, addUrl);
         }
     });
@@ -73,14 +61,14 @@ window.addEventListener("load", () => {
             var reader = new FileReader();
             reader.onload = ((e) => {
                 let result = e.target.result;
-                editEntry(editId.value, editDate.value, editText.value, result, userId);
+                editEntry(editId.value, editDate.value, editText.value, result);
             });
             reader.readAsDataURL(img);
         } else if (url != ""){
-            editEntry(editId.value, editDate.value, editText.value, url, userId);
+            editEntry(editId.value, editDate.value, editText.value, url);
             resetFields(editId, editDate, editText, editImage, editUrl);
         } else {
-            editEntry(editId.value, editDate.value, editText.value, "", userId);
+            editEntry(editId.value, editDate.value, editText.value, "");
             resetFields(editId, editDate, editText, editImage, editUrl);
         }
     });
@@ -159,7 +147,6 @@ function addEntry(date, text, img) {
         date: date,
         text: text,
         img: img
-        userId: userId
     };
     console.log("Adding ", dataObject);
     $.ajax({

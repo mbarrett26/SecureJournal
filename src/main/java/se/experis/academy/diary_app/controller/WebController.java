@@ -48,7 +48,7 @@ public class WebController {
         }
         return "index";
     }
-
+    //test
     @GetMapping("/") // Handles GET requests to "/login"
     public String redirect() {
             return "login"; // Renders the login view if the user is not logged in

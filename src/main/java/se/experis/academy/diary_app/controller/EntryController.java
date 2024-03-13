@@ -56,7 +56,7 @@ public class EntryController {
         }
         return new ResponseEntity<>(response, status);
     }
-
+    //test
     /**
      * Sets entry as inactive by id
      * @param id long

@@ -66,7 +66,7 @@ public class Entry {
     public String getImg() { return new String(img); }
 
     public void setInactive() { active = false;}
-
+    //test
     @Override
     public String toString() {
         return "Contact{" +

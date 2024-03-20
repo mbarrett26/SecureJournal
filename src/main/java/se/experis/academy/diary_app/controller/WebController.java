@@ -2,6 +2,7 @@ package se.experis.academy.diary_app.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import se.experis.academy.diary_app.GCM;
 import se.experis.academy.diary_app.model.BlogUser;
 import se.experis.academy.diary_app.model.Entry;
 import se.experis.academy.diary_app.repository.EntryRepository;
@@ -34,7 +35,7 @@ public class WebController {
      * @return to index.html with list of contacts
      */
     @GetMapping("/index")
-    public String index(Model model,Principal principal) {
+    public String index(Model model,Principal principal) throws Exception {
         String authUsername = null;
         if (principal != null) {
             System.err.println("here");
@@ -43,6 +44,15 @@ public class WebController {
             if(optionalBlogUser.isPresent()) {
                 Long userId = optionalBlogUser.get().getId();
                 List<Entry> entries = entryRepository.findEntriesByUserIDOrderByDateDesc(userId);
+
+                for(Entry e : entries){
+                    String msg = e.getText();
+                    String masterKey = optionalBlogUser.get().getPass();
+                    String decodedMsg = GCM.decrypt(msg, masterKey);
+
+                    e.setText(decodedMsg);
+                }
+
                 model.addAttribute("entries", entries);
             }
         }

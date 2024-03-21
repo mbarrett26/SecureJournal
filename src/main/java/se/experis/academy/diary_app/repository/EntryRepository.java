@@ -36,5 +36,7 @@ public interface EntryRepository extends CrudRepository<Entry, Long> {
     <S extends Entry> S save(S s);
 
     List<Entry> findEntriesByUserIDOrderByDateDesc(Long id);
+
+
 }
 

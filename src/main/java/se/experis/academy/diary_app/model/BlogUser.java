@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.util.Collection;
 
 @Data
@@ -30,7 +31,7 @@ public class BlogUser implements UserDetails { //model class for users
     private String username; //variable for user name
 
     @JsonIgnore
-    @Length(min = MIN_PASSWORD_LENGTH, message = "Password must be at least " + MIN_PASSWORD_LENGTH + " characters long")
+    @Size(min = MIN_PASSWORD_LENGTH, message = "Password must be at least " + MIN_PASSWORD_LENGTH + " characters long")
     @NotEmpty(message = "Please enter the password") //making sure its not null
     @Column(name = "password", nullable = false)
     private String password; //variable for password

@@ -215,7 +215,11 @@ function updateEntries(entries) {
        entriesHtml.appendChild(generateEntry(entry));
     });
 }
-
+function downloadFile(element) {
+    let parent = element.parentNode.parentNode.parentNode
+    let id = parent.children[0].children[0].innerText;
+    window.location.href = BASE_URL + "entry/download/"+id ;
+}
 /**
  * Generates one entry div
  * @param entry the entry to generate

@@ -46,7 +46,7 @@ public class SignupController {
 
         // Check if the username is available
         if (userService.findByUsername(blogUser.getUsername()).isPresent()) {
-            bindingResult.rejectValue("username", "error.username","Username is already registered, please try another one or go away");
+            bindingResult.rejectValue("username", "error.username","Username is already registered, please try another one");
             System.err.println("Username already taken error message");
         }
 

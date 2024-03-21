@@ -1,5 +1,6 @@
 package se.experis.academy.diary_app.controller;
 
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,11 @@ import se.experis.academy.diary_app.model.Response;
 import se.experis.academy.diary_app.repository.EntryRepository;
 import se.experis.academy.diary_app.service.UserService;
 
+import org.apache.commons.io.IOUtils;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -148,5 +154,29 @@ public class EntryController {
             httpStatus = HttpStatus.NOT_FOUND;
         }
         return new ResponseEntity<>(response, httpStatus);
+    }
+
+    @RequestMapping("/entry/download/{id}")
+    public void downloadDocument(@PathVariable long id,HttpServletResponse response, HttpServletRequest  request) throws IOException {
+        //jsonPersonal is the string that you're going to create dynamically in your code
+
+        Entry entryD = entryRepository.findById(id);
+
+        Gson gson = new Gson();
+        String entryInJson = gson.toJson(entryD);
+
+
+
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-Transfer-Encoding", "binary");
+        response.setContentType("application/json");
+        response.setContentLength( entryInJson.length());
+        response.setHeader("Content-Disposition", "attachment; filename=\"JournalEntry" + entryD.getId() + ".json\"");
+
+        //this copies the content of your string to the output stream
+        IOUtils.copy(IOUtils.toInputStream(entryInJson), response.getOutputStream());
+
+
+        response.flushBuffer();
     }
 }

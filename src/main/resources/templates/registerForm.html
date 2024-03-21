@@ -19,7 +19,7 @@
             <label>
                 <div class="alert-red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username Error
                 </div>
-                <input type="text" th:field="*{username}" placeholder="Username"/>
+                <input type="text" th:field="*{username}" minlength="3" placeholder="Username"/>
             </label>
         </div>
         <div>
@@ -27,6 +27,7 @@
                 <div class="alert-red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error
                 </div>
                 <input type="password" th:field="*{password}" placeholder="Password"/>
+
             </label>
         </div>
         <div>

@@ -65,6 +65,10 @@ public class Entry {
 
     public String getImg() { return new String(img); }
 
+    public void setImg(String img) {
+        this.img = img.toCharArray();
+    }
+
     @Override
     public String toString() {
         return "Contact{" +

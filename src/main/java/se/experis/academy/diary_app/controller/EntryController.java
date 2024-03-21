@@ -57,10 +57,13 @@ public class EntryController {
 
         for(Entry e : entries){
             String msg = e.getText();
+            String img = e.getImg();
             String masterKey = optionalBlogUser.get().getPass();
             String decodedMsg = GCM.decrypt(msg, masterKey);
+            String decodeImg = GCM.decrypt(img, masterKey);
 
             e.setText(decodedMsg);
+            e.setImg(decodeImg);
         }
 
         if (entries != null && !entries.isEmpty()){
@@ -107,11 +110,14 @@ public class EntryController {
             Optional<BlogUser> optionalBlogUser = userService.findByUsername(authUsername);
             if (optionalBlogUser.isPresent()) {
                 String msg = entry.getText();
+                String img = entry.getImg();
                 String masterKey = optionalBlogUser.get().getPass();
                 String encodedMsg = GCM.encrypt(masterKey, msg);
+                String encodedImg = GCM.encrypt(masterKey, img);
 
                 entry.setUserID(optionalBlogUser.get().getId()); // Set the user ID to the entry
                 entry.setText(encodedMsg);// Save encoded text
+                entry.setImg(encodedImg);
                 Entry createdEntry = entryRepository.save(entry);
                 Response response = new Response(createdEntry, "CREATED");
                 return new ResponseEntity<>(response, HttpStatus.CREATED);

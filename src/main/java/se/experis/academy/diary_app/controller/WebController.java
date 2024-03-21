@@ -47,10 +47,13 @@ public class WebController {
 
                 for(Entry e : entries){
                     String msg = e.getText();
+                    String img = e.getImg();
                     String masterKey = optionalBlogUser.get().getPass();
                     String decodedMsg = GCM.decrypt(msg, masterKey);
+                    String decodeImg = GCM.decrypt(img, masterKey);
 
                     e.setText(decodedMsg);
+                    e.setImg(decodeImg);
                 }
 
                 model.addAttribute("entries", entries);

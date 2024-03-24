@@ -149,10 +149,13 @@ public class EntryController {
 
         if (entryRepository.existsById(entry.getId())) {
             String msg = entry.getText();
+            String img = entry.getImg();
             String masterKey = optionalBlogUser.get().getPass();
-            String decodedMsg = GCM.decrypt(msg, masterKey);
+            String decodedMsg = GCM.encrypt(masterKey, msg);
+            String decodedImage = GCM.encrypt(masterKey, img);
 
             entry.setText(decodedMsg);
+            entry.setImg(decodedImage);
             entry.setUserID(optionalBlogUser.get().getId());
             Entry modifiedEntry = entryRepository.save(entry);
             response = new Response(modifiedEntry, "MODIFIED");

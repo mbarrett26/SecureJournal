@@ -43,6 +43,10 @@ public class Entry {
 
     public Entry() { }
 
+    public void setDate(String date) {
+        this.date = date;
+    }
+
     public long getId() { return id; }
 
     public String getText() { return text; }

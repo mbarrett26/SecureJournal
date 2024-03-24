@@ -1,15 +1,17 @@
 /* Global variables */
-let addForm, addDate, addText, addImage, addUrl;
+let addForm, addDate, addText, addImage, addUrl, jsonForm, addJson;
 let editForm, editDate, editText, editImage, editId, editUrl;
 let entriesHtml;
 
 const BASE_URL = location.origin + "/api/";
 
 function initializeGlobalVariables() {
+    jsonForm = document.getElementById('addFormJSON');
     addForm = document.getElementById('addForm');
     addDate = document.getElementById('date');
     addText = document.getElementById('text');
     addImage = document.getElementById('image');
+    addJson = document.getElementById('jsonU');
     addUrl = document.getElementById('url');
     editForm = document.getElementById('editForm');
     editDate = document.getElementById('edit-date');
@@ -48,6 +50,26 @@ window.addEventListener("load", () => {
             resetFields(addDate, addText, addImage, addUrl);
         }
     });
+
+    jsonForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        $('#jsonModal').modal('hide');
+
+        let file = addJson.files[0];
+
+        if (file != undefined) {
+            var reader = new FileReader();
+            reader.onload = onReaderLoad;
+            reader.readAsText(file);
+
+        }
+    });
+    function onReaderLoad(event){
+        console.log(event.target.result);
+        var obj = JSON.parse(event.target.result);
+        addJsonEntry(obj);
+        resetFields(addJson);
+    }
 
     /**
      * Takes care of the form submission
@@ -161,6 +183,22 @@ function addEntry(date, text, img) {
     });
 }
 
+function addJsonEntry(obj) {
+    if(checkEmptyField(obj)) return;
+
+    console.log("Adding ", obj);
+    $.ajax({
+        url: BASE_URL + "entry/create",
+        type: 'POST',
+        contentType: "application/json",
+        data: JSON.stringify(obj),
+        success: function(data) {
+            getAll();
+        },
+        fail: (err) => console.log("Couldn't create contact " + obj, err)
+    });
+}
+
 /**
  * Modifies an entry on database and fetches the new list
  * @param id
@@ -234,6 +272,9 @@ function generateEntry(entry) {
                 <button class="btn btn-sm" onclick="showEditEntry(this);">
                     <span class="oi oi-pencil" title="pencil" aria-hidden="true"></span>
                 </button>
+                <button class="btn btn-sm" onclick="downloadFile(this);">
+                        <span class="material-symbols--download" title="pencil" aria-hidden="true"></span>
+                 </button>
                 <button class="close" onclick="deleteEntry(this);">x</button>
             </div>
         </div>

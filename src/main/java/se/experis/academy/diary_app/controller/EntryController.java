@@ -1,5 +1,7 @@
 package se.experis.academy.diary_app.controller;
 
+import ch.qos.logback.core.pattern.IdentityCompositeConverter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -163,15 +165,30 @@ public class EntryController {
     }
 
     @RequestMapping("/entry/download/{id}")
-    public void downloadDocument(@PathVariable long id,HttpServletResponse response, HttpServletRequest  request) throws IOException {
-        //jsonPersonal is the string that you're going to create dynamically in your code
+    public void downloadDocument(@PathVariable long id,HttpServletResponse response, Principal principal) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper(); //used to convert object to json
 
         Entry entryD = entryRepository.findById(id);
+        String authUsername ="";
+        if (principal != null) {
+            System.err.println("here");
+            authUsername = principal.getName(); // Retrieves the logged-in username
+        }
+        Optional<BlogUser> optionalBlogUser = userService.findByUsername(authUsername);
 
-        Gson gson = new Gson();
-        String entryInJson = gson.toJson(entryD);
+
+        String masterKey = optionalBlogUser.get().getPass();
 
 
+        entryD.setText(GCM.decrypt(entryD.getText(),masterKey));
+        entryD.setImg(GCM.decrypt(entryD.getImg(),masterKey));
+
+        Entry insertedDownload = new Entry();
+        insertedDownload.setText(entryD.getText());
+        insertedDownload.setDate(entryD.getDate()); //creating new entry to remove user id.
+        insertedDownload.setImg(entryD.getImg());
+
+        String entryInJson = objectMapper.writeValueAsString(insertedDownload);
 
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Transfer-Encoding", "binary");

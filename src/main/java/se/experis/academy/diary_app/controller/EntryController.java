@@ -1,6 +1,7 @@
 package se.experis.academy.diary_app.controller;
 
-import ch.qos.logback.core.pattern.IdentityCompositeConverter;
+
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,7 +170,7 @@ public class EntryController {
 
     @RequestMapping("/entry/download/{id}")
     public void downloadDocument(@PathVariable long id,HttpServletResponse response, Principal principal) throws Exception {
-
+        ObjectMapper objectMapper = new ObjectMapper();
         Entry entryD = entryRepository.findById(id);
         String authUsername ="";
         if (principal != null) {
@@ -189,10 +190,10 @@ public class EntryController {
         insertedDownload.setText(entryD.getText());
         insertedDownload.setDate(entryD.getDate()); //creating new entry to remove user id.
         insertedDownload.setImg(entryD.getImg());
-        Gson gson = new Gson();
+        //Gson gson = new Gson();
 
-        String entryInJson = gson.toJson(insertedDownload);
-
+        //String entryInJson = gson.toJson(insertedDownload);
+        String entryInJson = objectMapper.writeValueAsString(insertedDownload);
 
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Transfer-Encoding", "binary");

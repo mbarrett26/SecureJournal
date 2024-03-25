@@ -169,7 +169,6 @@ public class EntryController {
 
     @RequestMapping("/entry/download/{id}")
     public void downloadDocument(@PathVariable long id,HttpServletResponse response, Principal principal) throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper(); //used to convert object to json
 
         Entry entryD = entryRepository.findById(id);
         String authUsername ="";
@@ -190,8 +189,10 @@ public class EntryController {
         insertedDownload.setText(entryD.getText());
         insertedDownload.setDate(entryD.getDate()); //creating new entry to remove user id.
         insertedDownload.setImg(entryD.getImg());
+        Gson gson = new Gson();
 
-        String entryInJson = objectMapper.writeValueAsString(insertedDownload);
+        String entryInJson = gson.toJson(insertedDownload);
+
 
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Transfer-Encoding", "binary");

@@ -8,7 +8,6 @@
 <body>
 <header th:fragment="header">
     <div class="topnav">
-        <a class="active" th:href="@{/}">Home</a>
         <span sec:authorize="isAuthenticated()">
         <a class="right" th:href="@{/logout}">Logout</a>
         </span>

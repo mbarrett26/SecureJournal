@@ -134,7 +134,7 @@
 
     <!-- Entries -->
     <div id="entries">
-        <h6 class="center" style="margin-top: 140px;" id="noEntry" th:if="${entries.isEmpty()}">You have No Entries.</h6>
+        <h6 class="center" style="margin-top: 140px;" id="noEntry" th:if="${entries.isEmpty()}">You have No Entries. <br><br><br><br><br><br><br></h6>
         <div class="entry card" th:each="entry : ${entries}">
             <div class="entry-header card-header">
                 <div class="entry-id"><h2 th:text="${entry.id}"></h2></div>
@@ -159,6 +159,7 @@
                 </div>
             </div>
             <div class="clear"></div>
+            <br><br>
         </div>
     </div>
 

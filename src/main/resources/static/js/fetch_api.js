@@ -5,7 +5,7 @@ let entriesHtml;
 
 const BASE_URL = location.origin + "/api/";
 
-function initializeGlobalVariables() {
+function initializeGlobalVariables() { //function to get all the document objects
     jsonForm = document.getElementById('addFormJSON');
     addForm = document.getElementById('addForm');
     addDate = document.getElementById('date');
@@ -22,32 +22,30 @@ function initializeGlobalVariables() {
     entriesHtml = document.getElementById('entries');
 }
 
-/* When ready document */
-window.addEventListener("load", () => {
+
+window.addEventListener("load", () => { //function for when window loads, adds a listener
     initializeGlobalVariables();
 
-    /**
-     * Takes care of the form submission
-     */
-    addForm.addEventListener('submit', (event) => {
+
+    addForm.addEventListener('submit', (event) => { //add form listener
         event.preventDefault();
         $('#addModal').modal('hide');
         let img = addImage.files[0];
-        let url = addUrl.value;
-        if (img != undefined) {
-            var reader = new FileReader();
+        let url = addUrl.value; //getting data from fields
+        if (img != undefined) { //making sure img is not undefined
+            var reader = new FileReader(); //read the image inputted
             reader.onload = ((e) => {
                 let result = e.target.result;
-                addEntry(addDate.value, addText.value, result);
-                resetFields(addDate, addText, addImage, addUrl);
+                addEntry(addDate.value, addText.value, result); //call add entry function
+                resetFields(addDate, addText, addImage, addUrl); //reset the add modal
             });
             reader.readAsDataURL(img);
-        } else if (url != ""){
-            addEntry(addDate.value, addText.value, url);
-            resetFields(addDate, addText, addImage, addUrl);
+        } else if (url != ""){ // check if a image url is added
+            addEntry(addDate.value, addText.value, url); //call add entry function
+            resetFields(addDate, addText, addImage, addUrl); //reset the add modal
         } else {
-            addEntry(addDate.value, addText.value, "");
-            resetFields(addDate, addText, addImage, addUrl);
+            addEntry(addDate.value, addText.value, ""); //call add entry function
+            resetFields(addDate, addText, addImage, addUrl); //reset the add modal
         }
     });
 
@@ -55,82 +53,66 @@ window.addEventListener("load", () => {
         event.preventDefault();
         $('#jsonModal').modal('hide');
 
-        let file = addJson.files[0];
+        let file = addJson.files[0]; //getting the file from the field
 
-        if (file != undefined) {
+        if (file != undefined) { //making sure the file is not undefined
             var reader = new FileReader();
-            reader.onload = onReaderLoad;
+            reader.onload = onReaderLoad; //read the file
             reader.readAsText(file);
 
         }
     });
-    function onReaderLoad(event){
+    function onReaderLoad(event){ //function for json form to read the json file
         console.log(event.target.result);
-        var obj = JSON.parse(event.target.result);
+        var obj = JSON.parse(event.target.result); //parse the json file
         addJsonEntry(obj);
         resetFields(addJson);
     }
 
-    /**
-     * Takes care of the form submission
-     */
-    editForm.addEventListener('submit', (event) => {
+
+    editForm.addEventListener('submit', (event) => { //edit form listener
         event.preventDefault();
         $('#editModal').modal('hide');
         let img = editImage.files[0];
-        let url = editUrl.value;
-        if (img != undefined) {
-            var reader = new FileReader();
+        let url = editUrl.value; //get data from fields
+        if (img != undefined) { //making sure img is not undefined
+            var reader = new FileReader(); //read the image
             reader.onload = ((e) => {
                 let result = e.target.result;
-                editEntry(editId.value, editDate.value, editText.value, result);
+                editEntry(editId.value, editDate.value, editText.value, result); //call edit function
+                resetFields(editId, editDate, editText, editImage, editUrl); //call reset function
             });
             reader.readAsDataURL(img);
-        } else if (url != ""){
-            editEntry(editId.value, editDate.value, editText.value, url);
-            resetFields(editId, editDate, editText, editImage, editUrl);
-        } else {
-            editEntry(editId.value, editDate.value, editText.value, "");
-            resetFields(editId, editDate, editText, editImage, editUrl);
+        } else if (url != ""){ //else make sure url field not empty
+            editEntry(editId.value, editDate.value, editText.value, url); //call edit function
+            resetFields(editId, editDate, editText, editImage, editUrl); //call reset function
+        } else { //else proceed with blank img
+            editEntry(editId.value, editDate.value, editText.value, ""); //call edit function
+            resetFields(editId, editDate, editText, editImage, editUrl); //call reset function
         }
     });
 
 });
 
-/**
- * Resets a input field
- * @param args input fields
- */
-function resetFields(...args) {
+
+function resetFields(...args) { //function to clear the fields
     args.forEach(argument => argument.value="");
 }
 
-/**
- * Checks if any of the arguments are empty
- * @param args any number of strings
- * @returns {boolean} true if one is empty
- */
-function checkEmptyField(...args) {
+
+function checkEmptyField(...args) { //function to verify if the fields are not empty.
     for (let i = 0; i < args.length; i++)
         if(args[i] === "") return true;
     return false;
 }
 
-/**
- * Sets the edit fields and shows the edit modal
- * @param element edit button
- */
-function showEditEntry(element) {
+function showEditEntry(element) { // Sets the edit fields and shows the edit modal
     setEditFields(element.parentNode.parentNode.parentNode);
     $('#editModal').modal('show');
 }
 
-/**
- * Sets all the fields for the edit modal
- * Url field will be empty if base64
- * @param element edit button
- */
-function setEditFields(element) {
+
+function setEditFields(element) { // Sets all the fields for the edit modal
     editDate.value = element.children[0].children[1].innerText;
     editId.value = element.children[0].children[0].innerText;
     editText.value = element.children[1].children[0].innerText;
@@ -143,29 +125,24 @@ function setEditFields(element) {
 /* ******* Fetching functions ******* */
 
 /**
- * Fetches all entries and generates them to the HTML doc
+ *
  */
-function getAll() {
+function getAll() { //Fetches all journal entries and generates them to the HTML doc
     $.ajax({
         url: BASE_URL + "entries",
         type: 'GET',
         contentType: "application/json",
         success: function(data) {
-            updateEntries(data.data);
+            updateEntries(data.data); //update the view
         },
         fail: (err) => console.log("Couldn't get contacts ", err)
     });
 }
 
-/**
- * Creates an entry to the database and fetches the new entries
- * @param date
- * @param text
- * @param img
- */
-function addEntry(date, text, img) {
-    if(checkEmptyField(date, text, img)) return;
-    let dataObject = {
+
+function addEntry(date, text, img) { //function to make call to add entry into the DB.
+    if(checkEmptyField(date, text, img)) return; //make sure not empty
+    let dataObject = { //create object to be passed
         date: date,
         text: text,
         img: img
@@ -177,14 +154,14 @@ function addEntry(date, text, img) {
         contentType: "application/json",
         data: JSON.stringify(dataObject),
         success: function(data) {
-            getAll();
+            getAll(); //update the view
         },
         fail: (err) => console.log("Couldn't create contact " + dataObject, err)
     });
 }
 
-function addJsonEntry(obj) {
-    if(checkEmptyField(obj)) return;
+function addJsonEntry(obj) { //function to make call to add json object into the DB.
+    if(checkEmptyField(obj)) return; //make sure not empty
 
     console.log("Adding ", obj);
     $.ajax({
@@ -193,21 +170,14 @@ function addJsonEntry(obj) {
         contentType: "application/json",
         data: JSON.stringify(obj),
         success: function(data) {
-            getAll();
+            getAll(); //update the view
         },
         fail: (err) => console.log("Couldn't create contact " + obj, err)
     });
 }
 
-/**
- * Modifies an entry on database and fetches the new list
- * @param id
- * @param date
- * @param text
- * @param img
- */
-function editEntry(id, date, text, img) {
-    if(checkEmptyField(id, date, text, img)) return;
+function editEntry(id, date, text, img) { //function to make call to edit an existing entry
+    if(checkEmptyField(id, date, text, img)) return; //make sure not empty
     let dataObject = {id: id, date: date, text: text, img:img}
     console.log("Editing ", dataObject);
     console.log("Date",dataObject.date);
@@ -223,11 +193,7 @@ function editEntry(id, date, text, img) {
     });
 }
 
-/**
- * Sets entry as inactive and removes it from the document
- * @param element Delete button
- */
-function deleteEntry(element) {
+function deleteEntry(element) { //function to delete an entry
     let parent = element.parentNode.parentNode.parentNode
     let id = parent.children[0].children[0].innerText;
     console.log("Deleting ", id);
@@ -237,33 +203,26 @@ function deleteEntry(element) {
         type: 'DELETE',
         contentType: "application/json",
         success: function(data) {
-            parent.parentNode.removeChild(parent);
+            parent.parentNode.removeChild(parent); //remove entry from view
         },
         fail: (err) => console.log("Couldn't delete entry", err)
     });
 }
 
-/**
- * Generates multiple DIV entries
- * @param entries entries to generate
- */
-function updateEntries(entries) {
+
+function updateEntries(entries) { //function to update an entry
     entriesHtml.innerHTML = "";
     entries.forEach(entry => {
        entriesHtml.appendChild(generateEntry(entry));
     });
 }
-function downloadFile(element) {
+function downloadFile(element) { //file download function
     let parent = element.parentNode.parentNode.parentNode
     let id = parent.children[0].children[0].innerText;
     window.location.href = BASE_URL + "entry/download/"+id ;
 }
-/**
- * Generates one entry div
- * @param entry the entry to generate
- * @returns {HTMLDivElement} HTML object with entry information
- */
-function generateEntry(entry) {
+
+function generateEntry(entry) {  //function to generate a journal entry for the view
     const entryHtml = `
         <div class="entry-header card-header">
             <div class="entry-id"><h2>${entry.id}</h2></div>

@@ -18,7 +18,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Base64;
 
-public class GCM {
+public class GCM { //Class used to encryption and decryption inside the program.
 
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final String CIPHER_ALGORITHM = "AES/GCM/NoPadding";
@@ -41,14 +41,13 @@ public class GCM {
     }*/
 
     private static SecretKey getAESKeyFromPassword(char[] password, byte[] salt)
-            throws NoSuchAlgorithmException, InvalidKeySpecException {
+            throws NoSuchAlgorithmException, InvalidKeySpecException { //function for decryption. Getting key from password.
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
         KeySpec spec = new PBEKeySpec(password, salt, ITERATIONS, KEY_LENGTH * 8);
-        SecretKey secret = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
-        return secret;
+        return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
     }
 
-    public static String decrypt(String cipherContent, String password) throws Exception {
+    public static String decrypt(String cipherContent, String password) throws Exception { //decryption function
         byte[] decode = Base64.getDecoder().decode(cipherContent.getBytes(UTF_8));
         ByteBuffer byteBuffer = ByteBuffer.wrap(decode);
 
@@ -68,7 +67,7 @@ public class GCM {
         return new String(plainText, UTF_8);
     }
 
-    public static String encrypt(String password, String plainMessage) throws Exception {
+    public static String encrypt(String password, String plainMessage) throws Exception { //encryption function
         byte[] salt = getRandomNonce(SALT_LENGTH);
         SecretKey secretKey = getSecretKey(password, salt);
 
@@ -86,14 +85,14 @@ public class GCM {
         return Base64.getEncoder().encodeToString(cipherByte);
     }
 
-    public static byte[] getRandomNonce(int length) {
+    public static byte[] getRandomNonce(int length) { //function to get nonce
         byte[] nonce = new byte[length];
         new SecureRandom().nextBytes(nonce);
         return nonce;
     }
 
     public static SecretKey getSecretKey(String password, byte[] salt)
-            throws NoSuchAlgorithmException, InvalidKeySpecException {
+            throws NoSuchAlgorithmException, InvalidKeySpecException { //function to get secret key
         KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, ITERATIONS, KEY_LENGTH * 8);
 
         SecretKeyFactory factory = SecretKeyFactory.getInstance(FACTORY_INSTANCE);
@@ -101,7 +100,7 @@ public class GCM {
     }
 
     private static Cipher initCipher(int mode, SecretKey secretKey, byte[] iv) throws InvalidKeyException,
-            InvalidAlgorithmParameterException, NoSuchPaddingException, NoSuchAlgorithmException {
+            InvalidAlgorithmParameterException, NoSuchPaddingException, NoSuchAlgorithmException { //function for the start of the cipher generation
         Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
         cipher.init(mode, secretKey, new GCMParameterSpec(TAG_LENGTH * 8, iv));
         return cipher;

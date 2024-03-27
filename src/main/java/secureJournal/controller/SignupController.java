@@ -22,27 +22,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@SessionAttributes("blogUser") // Controls Signup Functionality
+@SessionAttributes("journalUser") // Controls Signup Functionality
 public class SignupController {
 
     private final UserService userService;
 
-    @Autowired // Autowires the UserService dependency via constructor injection
+    @Autowired
     public SignupController(UserService userService) {
         this.userService = userService;
     }
 
-    // Displays the registration form
-    @GetMapping("/signup")
+
+    @GetMapping("/signup") // mapping the registration form
     public String getRegisterForm(Model model) {
-        // Creates a new BlogUser instance and passes it to the registerForm view template
+        // Creates a new user instance and passes it to the registerForm view template
         JournalUser journalUser = new JournalUser();
-        model.addAttribute("blogUser", journalUser);
+        model.addAttribute("journalUser", journalUser);
         return "registerForm"; // Returns the name of the view to be rendered
     }
 
     // Handles the submission of the registration form
-    @PostMapping("/register")
+    @PostMapping("/register") //mapping for register view
     public String registerNewUser(@Valid @ModelAttribute JournalUser journalUser, BindingResult bindingResult, SessionStatus sessionStatus) throws RoleNotFoundException {
         // Code to handle registration of a new user...
 

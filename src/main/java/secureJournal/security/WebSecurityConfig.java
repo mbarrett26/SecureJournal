@@ -14,8 +14,8 @@ import javax.sql.DataSource;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final DataSource dataSource;
-    private static final String USERS_SQL_QUERY = "select username,password,enabled from users where username = ?";
-    private static final String AUTHORITIES_SQL_QUERY = "select users.username, authorities.authority\n" +
+    private static final String USERS_SQL_QUERY = "select username,password,enabled from users where username = ?"; //query for verifying login
+    private static final String AUTHORITIES_SQL_QUERY = "select users.username, authorities.authority\n" + // query for verifying role
             "from users\n" +
             "inner join users_authorities on (users.id = users_authorities.user_id)\n" +
             "inner join authorities on (users_authorities.authority_id = authorities.id)\n" +
@@ -24,12 +24,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     public WebSecurityConfig(DataSource dataSource) {
         this.dataSource = dataSource;
-    }
+    } //basic constructor
 
     @Bean
     public BCryptPasswordEncoder bcryptEncoder() {
         return new BCryptPasswordEncoder();
-    }
+    } //basic constructor
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -39,8 +39,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers().frameOptions().disable()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/index/**").hasRole("USER")
-                .antMatchers("/deletePost/**").hasRole("USER")
+                .antMatchers("/index/**").hasRole("USER") //only access home page with login
                 .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
@@ -59,7 +58,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+    public void configureGlobal(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception { //function for login authentication
 
         authenticationManagerBuilder
                 .jdbcAuthentication()

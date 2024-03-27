@@ -7,19 +7,14 @@ import secureJournal.model.Entry;
 
 import java.util.List;
 
-/**
- * Represents all the methods available for the API
- */
+
 @Repository
-public interface EntryRepository extends CrudRepository<Entry, Long> {
+public interface EntryRepository extends CrudRepository<Entry, Long> { // crud repo to store journal entries
+
+
 
     /**
-     * Finds all the entries and sorts them by date
-     * @return list of entries
-     */
-    //List<Entry> findEntriesByUserIDOrderById(long userID);
-    /**
-     * finds entry by id
+     * Find a journal entry by id
      * @param id long
      * @return entry
      */
@@ -27,14 +22,16 @@ public interface EntryRepository extends CrudRepository<Entry, Long> {
 
 
     /**
-     * Creates or replaces entry
-     * @param s Entry
-     * @param <S>
-     * @return Entry
+     * Creates or replaces a journal entry
      */
     @Override
     <S extends Entry> S save(S s);
 
+
+    /**
+     * Finds all the entries by user id and sorts them by date
+     * @return list of journal entries
+     */
     List<Entry> findEntriesByUserIDOrderByDateDesc(Long id);
 
 

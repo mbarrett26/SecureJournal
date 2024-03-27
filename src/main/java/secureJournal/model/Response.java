@@ -1,35 +1,22 @@
 package secureJournal.model;
 
-/**
- * This class represents a response for the entry controller
- */
-public class Response {
+
+public class Response { //class to create response for the entry controller
     private Object data;
     private String message;
 
-    /**
-     * Constructor
-     * @param data Some data or null
-     * @param message A string
-     */
-    public Response(Object data, String message) {
+    public Response(Object data, String message) { //constructor
         this.data = data;
         this.message = message;
     }
 
     public Object getData() {
         return data;
-    }
+    } //getter and setter
 
     public void setData(Object data) {
         this.data = data;
     }
 
-    public String getMessage() {
-        return message;
-    }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
 }

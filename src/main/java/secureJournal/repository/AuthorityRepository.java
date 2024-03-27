@@ -8,7 +8,7 @@ import secureJournal.model.Authority;
 import java.util.Optional;
 
 @Repository
-public interface AuthorityRepository extends JpaRepository<Authority, Long> { // JPA repo to store roles
+public interface AuthorityRepository extends JpaRepository<Authority, Long> { // JPA repo to store user roles
 
     Optional<Authority> findByAuthority(String authority); //function to find a role in DB
 

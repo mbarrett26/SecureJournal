@@ -22,12 +22,10 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Represents the Entry API
- */
+
 @RestController
 @RequestMapping("/api")
-public class EntryController {
+public class EntryController { //controller for journal entries
 
 
     private final EntryRepository entryRepository;
@@ -38,12 +36,9 @@ public class EntryController {
         this.entryRepository = entryRepository;
         this.userService = userService;
     }
-    /**
-     * Gets all the active journal entries and sorts them by date
-     * @return ResponseEntity with all entries and message, or null and message
-     */
+
     @GetMapping("/entries")
-    public ResponseEntity<Response> getEntries(Principal principal) throws Exception {
+    public ResponseEntity<Response> getEntries(Principal principal) throws Exception { //function to get all journal entries of a user
         Response response;
         HttpStatus status;
         String authUsername = null;
@@ -76,12 +71,8 @@ public class EntryController {
         return new ResponseEntity<>(response, status);
     }
 
-    /**
-     * Deletes a specified entry
-     * @return ResponseEntity with all entries and message, or null and message
-     */
     @DeleteMapping("/entry/delete/{id}")
-    public ResponseEntity<Response> deleteEntry(@PathVariable("id") long id) {
+    public ResponseEntity<Response> deleteEntry(@PathVariable("id") long id) { //function to delete a journal entry
         Response response;
         HttpStatus status;
         if (entryRepository.existsById(id)) { //check that journal entry ID exists
@@ -97,13 +88,9 @@ public class EntryController {
         return new ResponseEntity<>(response, status);
     }
 
-    /**
-     * Creates an entry
-     * @param entry entry
-     * @return ResponseEntity with entry and message, otherwise null and message
-     */
+
     @PostMapping("/entry/create")
-    public ResponseEntity<Response> addEntry(@RequestBody Entry entry, Principal principal) throws Exception {
+    public ResponseEntity<Response> addEntry(@RequestBody Entry entry, Principal principal) throws Exception { //function to create a new journal entry
         if (principal != null) { //ensure that user is logged in.
             String authUsername = principal.getName(); // Retrieves the logged-in username
             Optional<JournalUser> optionalJournalUser = userService.findByUsername(authUsername); //Getting JournalUser Object from username
@@ -129,13 +116,8 @@ public class EntryController {
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
-    /**
-     * Updates the entry
-     * @param entry entry with modifications
-     * @return ResponseEntity with modified entry and message, or null and message
-     */
     @PatchMapping("/entry/update")
-    public ResponseEntity<Response> updateEntry(@RequestBody Entry entry, Principal principal) throws Exception {
+    public ResponseEntity<Response> updateEntry(@RequestBody Entry entry, Principal principal) throws Exception { //function to update an existing entry
         Response response;
         HttpStatus httpStatus;
         String authUsername ="";

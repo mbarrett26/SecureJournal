@@ -14,28 +14,21 @@ import java.util.Optional;
 import org.springframework.web.bind.annotation.GetMapping;
 import secureJournal.service.UserService;
 
-/**
- * Class that handles all the views
- */
-@Controller
-public class WebController {
 
+@Controller
+public class WebController { //controller for the login and index(home) page
 
     private final EntryRepository entryRepository;
-    private final UserService userService;
+    private final UserService userService; //defining service and repo for use in class
 
     @Autowired
-    public WebController(EntryRepository entryRepository,UserService userService) {
+    public WebController(EntryRepository entryRepository,UserService userService) { //constructor
         this.entryRepository = entryRepository;
         this.userService = userService;
     }
-    /**
-     * Gets jouranl entries and returns them to index.html
-     * @param model, principal
-     * @return to index.html with list of contacts
-     */
+
     @GetMapping("/index")
-    public String index(Model model,Principal principal) throws Exception {
+    public String index(Model model,Principal principal) throws Exception { //index map used to show the main page
         String authUsername = null;
         if (principal != null) { //Checking if the user is logged in
 
@@ -64,8 +57,8 @@ public class WebController {
         }
         return "index";
     }
-    //test
-    @GetMapping("/") // Handles GET requests to "/login"
+
+    @GetMapping("/") // Handles GET requests to "/", redirects to login.
     public String redirect() {
             return "login"; // Renders the login view if the user is not logged in
     }

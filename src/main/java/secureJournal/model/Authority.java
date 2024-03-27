@@ -24,7 +24,7 @@ public class Authority implements GrantedAuthority { //model class for roles
     private Collection<JournalUser> users; //collection of users
 
     @Override
-    public String toString() { //to string method for model class
+    public String toString() { //to string method for authority model class
         return "Authority{" +
                 "id=" + id +
                 ", authority='" + authority + '\'' +

@@ -26,17 +26,17 @@ public class JournalUser implements UserDetails { //model class for users
     private Long id; //variable for user ID
 
     @Length(min = MIN_USERNAME_LENGTH, message = "Username must be at least " + MIN_USERNAME_LENGTH + " characters long")
-    @NotEmpty(message = "Please enter username") //making sure its not null
+    @NotEmpty(message = "Please enter username") //making sure it's not null
     @Column(name = "username", nullable = false, unique = true)
     private String username; //variable for user name
 
     @JsonIgnore
     @Size(min = MIN_PASSWORD_LENGTH, message = "Password must be at least " + MIN_PASSWORD_LENGTH + " characters long")
-    @NotEmpty(message = "Please enter the password") //making sure its not null
+    @NotEmpty(message = "Please enter the password") //making sure it's not null
     @Column(name = "password", nullable = false)
     private String password; //variable for password
 
-    @Column(name = "enabled", nullable = false)
+    @Column(name = "enabled", nullable = false) //variable for user security
     private Boolean enabled;
 
 
@@ -52,26 +52,28 @@ public class JournalUser implements UserDetails { //model class for users
     @Override
     public boolean isAccountNonExpired() {
         return true;
-    }
+    } //function for security checks
+
 
     @Override
     public boolean isAccountNonLocked() {
         return true;
-    }
+    } //function for security checks
 
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
-    }
+    } //function for security checks
 
     @Override
     public boolean isEnabled() {
         return this.enabled;
-    }
+    } //function for security checks
+
 
     public String getPass(){
         return password;
-    }
+    } //getter function
 
 
     @Override

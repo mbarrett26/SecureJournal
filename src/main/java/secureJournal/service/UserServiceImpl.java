@@ -23,7 +23,7 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private static final String DEFAULT_ROLE = "ROLE_USER"; //variable to store the default role, To add an admin you must manually do it for security.
+    private static final String DEFAULT_ROLE = "ROLE_USER"; //variable to store the default role.
     private final BCryptPasswordEncoder bcryptEncoder; //encoder used for encoding password into DB
     private final JournalUserRepository journalUserRepository; //JPA Repository to store User Models
     private final AuthorityRepository authorityRepository; //JPA Repository to store role Models
@@ -37,11 +37,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException { //function to get a username from the Repository
-        Optional<JournalUser> blogUser = journalUserRepository.findByUsername(username);
-        if (blogUser.isPresent()) {
-            return blogUser.get();
-        } else {
-            throw new UsernameNotFoundException("No user found with username " + username);
+        Optional<JournalUser> journalUser = journalUserRepository.findByUsername(username);  //getting journal object from username
+        if (journalUser.isPresent()) { //verifying the user is present
+            return journalUser.get(); // pass user object
+        } else { //else throw exception
+            throw new UsernameNotFoundException("No user found with username " + username); // pass exception
         }
     }
 
@@ -51,9 +51,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public JournalUser saveNewUser(JournalUser journalUser) throws RoleNotFoundException {
+    public JournalUser saveNewUser(JournalUser journalUser) throws RoleNotFoundException { //function to save a user in the repository (DB)
         System.err.println("saveNewBlogUser: " + journalUser);
-        journalUser.setPassword(this.bcryptEncoder.encode(journalUser.getPassword()));
+
+        journalUser.setPassword(this.bcryptEncoder.encode(journalUser.getPassword())); //encrypting the user password using bcrypt
 
         journalUser.setEnabled(true); // setting attributes in the user model
 
@@ -63,9 +64,9 @@ public class UserServiceImpl implements UserService {
             Authority authority = addAuthority.get();
             Collection<Authority> authorities = Collections.singletonList(authority);
             journalUser.setAuthorities(authorities);
-            //return this.blogUserRepository.saveAndFlush(blogUser); //saving user
-            return this.journalUserRepository.saveAndFlush(journalUser);
-        } else { //else for if role is not found
+
+            return this.journalUserRepository.saveAndFlush(journalUser); //save user
+        } else { //else for if role is not found.
             throw new RoleNotFoundException("Default role not found for blog user with username " + journalUser.getUsername());
         }
     }

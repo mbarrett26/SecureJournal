@@ -1,4 +1,4 @@
-package se.experis.academy.diary_app.service;
+package secureJournal.service;
 
 //import org.example.blogapp.model.Authority;
 //import org.example.blogapp.model.BlogUser;
@@ -10,10 +10,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import se.experis.academy.diary_app.model.Authority;
-import se.experis.academy.diary_app.model.BlogUser;
-import se.experis.academy.diary_app.repository.BlogUserRepository;
-import se.experis.academy.diary_app.repository.AuthorityRepository;
+import secureJournal.model.Authority;
+import secureJournal.model.JournalUser;
+import secureJournal.repository.JournalUserRepository;
+import secureJournal.repository.AuthorityRepository;
 
 import javax.management.relation.RoleNotFoundException;
 import java.util.Collection;
@@ -25,19 +25,19 @@ public class UserServiceImpl implements UserService {
 
     private static final String DEFAULT_ROLE = "ROLE_USER"; //variable to store the default role, To add an admin you must manually do it for security.
     private final BCryptPasswordEncoder bcryptEncoder; //encoder used for encoding password into DB
-    private final BlogUserRepository blogUserRepository; //JPA Repository to store User Models
+    private final JournalUserRepository journalUserRepository; //JPA Repository to store User Models
     private final AuthorityRepository authorityRepository; //JPA Repository to store role Models
 
     @Autowired
-    public UserServiceImpl(BCryptPasswordEncoder bcryptEncoder, BlogUserRepository blogUserRepository, AuthorityRepository authorityRepository) {
+    public UserServiceImpl(BCryptPasswordEncoder bcryptEncoder, JournalUserRepository journalUserRepository, AuthorityRepository authorityRepository) {
         this.bcryptEncoder = bcryptEncoder;
-        this.blogUserRepository = blogUserRepository; //constructor from implementation
+        this.journalUserRepository = journalUserRepository; //constructor from implementation
         this.authorityRepository = authorityRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException { //function to get a username from the Repository
-        Optional<BlogUser> blogUser = blogUserRepository.findByUsername(username);
+        Optional<JournalUser> blogUser = journalUserRepository.findByUsername(username);
         if (blogUser.isPresent()) {
             return blogUser.get();
         } else {
@@ -46,27 +46,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<BlogUser> findByUsername(String username) { //function to find a username from the Repository
-        return blogUserRepository.findByUsername(username);
+    public Optional<JournalUser> findByUsername(String username) { //function to find a username from the Repository
+        return journalUserRepository.findByUsername(username);
     }
 
     @Override
-    public BlogUser saveNewUser(BlogUser blogUser) throws RoleNotFoundException {
-        System.err.println("saveNewBlogUser: " + blogUser);
-        blogUser.setPassword(this.bcryptEncoder.encode(blogUser.getPassword()));
+    public JournalUser saveNewUser(JournalUser journalUser) throws RoleNotFoundException {
+        System.err.println("saveNewBlogUser: " + journalUser);
+        journalUser.setPassword(this.bcryptEncoder.encode(journalUser.getPassword()));
 
-        blogUser.setEnabled(true); // setting attributes in the user model
+        journalUser.setEnabled(true); // setting attributes in the user model
 
 
         Optional<Authority> addAuthority = this.authorityRepository.findByAuthority(DEFAULT_ROLE);
         if (addAuthority.isPresent()) { //add role to user
             Authority authority = addAuthority.get();
             Collection<Authority> authorities = Collections.singletonList(authority);
-            blogUser.setAuthorities(authorities);
+            journalUser.setAuthorities(authorities);
             //return this.blogUserRepository.saveAndFlush(blogUser); //saving user
-            return this.blogUserRepository.saveAndFlush(blogUser);
+            return this.journalUserRepository.saveAndFlush(journalUser);
         } else { //else for if role is not found
-            throw new RoleNotFoundException("Default role not found for blog user with username " + blogUser.getUsername());
+            throw new RoleNotFoundException("Default role not found for blog user with username " + journalUser.getUsername());
         }
     }
 }

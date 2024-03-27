@@ -1,4 +1,4 @@
-package se.experis.academy.diary_app.model;
+package secureJournal.model;
 
 /**
  * This class represents a response for the entry controller

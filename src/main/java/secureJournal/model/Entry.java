@@ -1,4 +1,4 @@
-package se.experis.academy.diary_app.model;
+package secureJournal.model;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;

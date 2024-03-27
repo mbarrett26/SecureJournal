@@ -1,18 +1,18 @@
-package se.experis.academy.diary_app.controller;
+package secureJournal.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import se.experis.academy.diary_app.GCM;
-import se.experis.academy.diary_app.model.BlogUser;
-import se.experis.academy.diary_app.model.Entry;
-import se.experis.academy.diary_app.repository.EntryRepository;
+import secureJournal.GCM;
+import secureJournal.model.JournalUser;
+import secureJournal.model.Entry;
+import secureJournal.repository.EntryRepository;
 
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import se.experis.academy.diary_app.service.UserService;
+import secureJournal.service.UserService;
 
 /**
  * Class that handles all the views
@@ -22,41 +22,44 @@ public class WebController {
 
 
     private final EntryRepository entryRepository;
-    private final UserService userService; // Dependency on PostService
+    private final UserService userService;
 
-    @Autowired // Autowires the PostService dependency via constructor injection
+    @Autowired
     public WebController(EntryRepository entryRepository,UserService userService) {
         this.entryRepository = entryRepository;
         this.userService = userService;
     }
     /**
-     * Gets contacts and returns them to index.html
-     * @param model
+     * Gets jouranl entries and returns them to index.html
+     * @param model, principal
      * @return to index.html with list of contacts
      */
     @GetMapping("/index")
     public String index(Model model,Principal principal) throws Exception {
         String authUsername = null;
-        if (principal != null) {
-            System.err.println("here");
-            authUsername = principal.getName(); // Retrieves the logged-in username
-            Optional<BlogUser> optionalBlogUser = userService.findByUsername(authUsername);
-            if(optionalBlogUser.isPresent()) {
-                Long userId = optionalBlogUser.get().getId();
-                List<Entry> entries = entryRepository.findEntriesByUserIDOrderByDateDesc(userId);
+        if (principal != null) { //Checking if the user is logged in
 
-                for(Entry e : entries){
+            authUsername = principal.getName(); // Retrieves the logged-in username
+
+            Optional<JournalUser> optionalJournalUser = userService.findByUsername(authUsername); //Getting JournalUser Object from username
+
+            if(optionalJournalUser.isPresent()) { //ensuring the user exists
+
+                Long userId = optionalJournalUser.get().getId(); //getting the user ID of the logged in user
+                List<Entry> entries = entryRepository.findEntriesByUserIDOrderByDateDesc(userId); //finding the entries tied to that user id.
+
+                for(Entry e : entries){ //iterate thourgh the entry list to decrypt entries  using user password.
                     String msg = e.getText();
                     String img = e.getImg();
-                    String masterKey = optionalBlogUser.get().getPass();
+                    String masterKey = optionalJournalUser.get().getPass(); //decrypting image and journal text
                     String decodedMsg = GCM.decrypt(msg, masterKey);
                     String decodeImg = GCM.decrypt(img, masterKey);
 
-                    e.setText(decodedMsg);
+                    e.setText(decodedMsg); //modifying the entry with the decrypted text
                     e.setImg(decodeImg);
                 }
 
-                model.addAttribute("entries", entries);
+                model.addAttribute("entries", entries); //creating a model to pass to the index page to use to load entries on start-up
             }
         }
         return "index";

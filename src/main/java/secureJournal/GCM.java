@@ -1,4 +1,4 @@
-package se.experis.academy.diary_app;
+package secureJournal;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;

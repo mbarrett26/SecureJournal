@@ -1,9 +1,9 @@
-package se.experis.academy.diary_app.repository;
+package secureJournal.repository;
 
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import se.experis.academy.diary_app.model.Entry;
+import secureJournal.model.Entry;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package se.experis.academy.diary_app.controller;
+package secureJournal.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
-import se.experis.academy.diary_app.model.BlogUser;
-import se.experis.academy.diary_app.service.UserService;
+import secureJournal.model.JournalUser;
+import secureJournal.service.UserService;
 
 import javax.management.relation.RoleNotFoundException;
 import javax.validation.Valid;
@@ -36,18 +36,18 @@ public class SignupController {
     @GetMapping("/signup")
     public String getRegisterForm(Model model) {
         // Creates a new BlogUser instance and passes it to the registerForm view template
-        BlogUser blogUser = new BlogUser();
-        model.addAttribute("blogUser", blogUser);
+        JournalUser journalUser = new JournalUser();
+        model.addAttribute("blogUser", journalUser);
         return "registerForm"; // Returns the name of the view to be rendered
     }
 
     // Handles the submission of the registration form
     @PostMapping("/register")
-    public String registerNewUser(@Valid @ModelAttribute BlogUser blogUser, BindingResult bindingResult, SessionStatus sessionStatus) throws RoleNotFoundException {
+    public String registerNewUser(@Valid @ModelAttribute JournalUser journalUser, BindingResult bindingResult, SessionStatus sessionStatus) throws RoleNotFoundException {
         // Code to handle registration of a new user...
 
         // Check if the username is available
-        if (userService.findByUsername(blogUser.getUsername()).isPresent()) {
+        if (userService.findByUsername(journalUser.getUsername()).isPresent()) {
             bindingResult.rejectValue("username", "error.username","Username is already registered, please try another one");
             System.err.println("Username already taken error message");
         }
@@ -58,8 +58,8 @@ public class SignupController {
             return "registerForm"; // Returns the registration form to display errors
         }
 
-        // Validate Password
-        String password = blogUser.getPassword();
+        // Validate the user Password
+        String password = journalUser.getPassword();
         List<String> missingRequirements = new ArrayList<>();
 
         if(password != null && password.length() < 8){
@@ -85,11 +85,11 @@ public class SignupController {
             return "registerForm";
         }
 
-        // Persist the new blog user
-        this.userService.saveNewUser(blogUser);
+        // save the new user
+        this.userService.saveNewUser(journalUser);
 
-        // Create Authentication token and log in after registering the new blog user
-        Authentication auth = new UsernamePasswordAuthenticationToken(blogUser, blogUser.getPassword(), blogUser.getAuthorities());
+        // Create Authentication token and log in after registering the new user
+        Authentication auth = new UsernamePasswordAuthenticationToken(journalUser, journalUser.getPassword(), journalUser.getAuthorities());
         System.err.println("AuthToken: " + auth); // For testing and debugging purposes
         SecurityContextHolder.getContext().setAuthentication(auth); // Sets authentication in SecurityContextHolder
         System.err.println("SecurityContext Principal: " + SecurityContextHolder.getContext().getAuthentication().getPrincipal()); // For testing and debugging purposes

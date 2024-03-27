@@ -1,9 +1,9 @@
-package se.experis.academy.diary_app.repository;
+package secureJournal.repository;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import se.experis.academy.diary_app.model.Authority;
+import secureJournal.model.Authority;
 
 import java.util.Optional;
 

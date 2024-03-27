@@ -1,4 +1,4 @@
-package se.experis.academy.diary_app.security;
+package secureJournal.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;

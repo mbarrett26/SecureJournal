@@ -1,4 +1,4 @@
-package se.experis.academy.diary_app.model;
+package secureJournal.model;
 
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,7 +21,7 @@ public class Authority implements GrantedAuthority { //model class for roles
     private String authority; //role name
 
     @ManyToMany(mappedBy = "authorities", cascade = CascadeType.ALL)
-    private Collection<BlogUser> users; //collection of users
+    private Collection<JournalUser> users; //collection of users
 
     @Override
     public String toString() { //to string method for model class

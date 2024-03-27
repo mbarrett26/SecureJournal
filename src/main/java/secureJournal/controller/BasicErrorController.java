@@ -1,4 +1,4 @@
-package se.experis.academy.diary_app.controller;
+package secureJournal.controller;
 
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;

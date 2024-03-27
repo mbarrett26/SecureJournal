@@ -1,4 +1,4 @@
-package se.experis.academy.diary_app.model;
+package secureJournal.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -14,7 +14,7 @@ import java.util.Collection;
 @Entity
 @Table(name = "users")
 @SequenceGenerator(name = "user_seq_gen", sequenceName = "user_seq", initialValue = 10, allocationSize = 1)
-public class BlogUser implements UserDetails { //model class for users
+public class JournalUser implements UserDetails { //model class for users
 
     private static final int MIN_USERNAME_LENGTH = 3;
     private static final int MIN_PASSWORD_LENGTH = 8;

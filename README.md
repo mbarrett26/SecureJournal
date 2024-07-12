@@ -1,5 +1,5 @@
 # Secure Journal App
-Welcome to the Secure Journal Application developed by Group 18, consisting of Banujan Sutheswaran, Mithusan Arulampalam, Nathan Hacault, and Micheal Barrett.
+Welcome to the Secure Journal Application developed by Group 18, consisting of Banujan Sutheswaran, Mithusan Arulampalam, Nathan Hacault, and Michael Barrett.
 
 ## Installation
 Before proceeding with the installation please ensure that you have at least Java 11 on your machine
